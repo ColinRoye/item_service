@@ -5,7 +5,12 @@ services:
     volumes:
       - .:/usr/src/service/
     working_dir: /usr/src/service/
-    command: bash -c "npm install -g nodemon && nodemon server"
+    command: bash -c "npm install -g nodemon && nodemon --exec \"node server -d\""
     ports:
      - 1234:1234
      - 1235:1235
+     - 3000:3000
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.3@sha256:9855face4588eda23a69dfada992d0894d64ed06f4549cc5a0b8242415013ba5
+    ports:
+      - "9200:9200"

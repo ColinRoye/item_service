@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 const debug = require("./src/debug");
 const express = require('express')
 const bodyParser = require("body-parser")
@@ -7,8 +8,6 @@ var cors = require('cors');
 const app = express()
 const args = process.argv;
 var port = 3000
-
-require('./src/schema.js');
 
 
 
