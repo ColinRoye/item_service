@@ -3,8 +3,8 @@ const debug = require("./debug");
 const { Client } = require('@elastic/elasticsearch')
 const client = new Client({ node: 'http://elasticsearch:9200' })
 
-const index = "tests";
-const type = "test";
+const index = "tests20";
+const type = "test20";
 
 //define database specific tasks here
 module.exports={
@@ -28,10 +28,13 @@ module.exports={
                status = env.statusError;
                error = "error";
           })
-          if(response.body){
+          if(response && response.body && response.body.hits.hits[0]){
                item = response.body.hits.hits[0]._source;
                debug.log("item: " + JSON.stringify(item));
           }
+	  if(item){
+	       item.id = id 
+	  }
           let result = {
                status: status,
                item: item,
@@ -57,24 +60,32 @@ module.exports={
           const response = await client.search({
                index: index,
                type: type,
-               //from : 0, size : limit,
+               size : limit,
                body:{
                     query: {
                        range : {
                            timestamp : {
-                               lte : timestamp
+                               
+			       lte : timestamp
                            }
                        }
                    }
                }
-
          }).catch((e)=>{
               debug.log(e);
               status = env.statusError;
               error = "error";
          })
           debug.log(JSON.stringify(response))
-          return response.body.hits.hits
+	  if(response){
+              return response.body.hits.hits.map((elm)=>{
+      	          //if(elm.timestamp === timestamp){ return  }
+		  let ret = elm._source;
+     	          ret.id = elm._id;
+	          return ret;
+	      })
+          return {}
+	  }
      },
      addItem: async (item)=>{
           let status = env.statusOk;
@@ -107,5 +118,26 @@ module.exports={
           }
           debug.log(JSON.stringify(response));
           return result;
+     },
+     getAll: async ()=>{
+	const response = await client.search({
+               index: index,
+               type: type,
+         }).catch((e)=>{
+              debug.log(e);
+              status = env.statusError;
+              error = "error";
+         })
+          debug.log(JSON.stringify(response))
+          if(response){
+              return response.body.hits.hits.map((elm)=>{
+                  if(elm.timestamp === timestamp){ return  }
+                  let ret = elm._source;
+                  ret.id = elm._id;
+                  return ret;
+              })
+          return {}
+          }
+
      }
 }

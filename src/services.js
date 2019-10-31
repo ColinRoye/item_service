@@ -5,17 +5,26 @@ const uuid = require("uuid/v1")
 
 //export db agnostic services
 module.exports={
+     getAll: async()=>{
+	   return await db.getAll();
+     },
      addItem: async (content, childType, username)=>{
           let id = uuid();
+	  let ret = {};
+	
+	  if(!content){
+	       ret.status = env.statusError
+	       return ret
+	  }
           let item = {
                content: content,
                childType: childType,
                username: username,
-               timestamp: Math.floor(new Date() / 1000),
+               timestamp: (new Date() / 1000),
                id: id
           }
 
-          let ret = await db.addItem(item);
+          ret = await db.addItem(item);
           return ret;
      },
      getItemById: async (id)=>{
