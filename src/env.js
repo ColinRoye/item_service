@@ -1,5 +1,5 @@
 
 module.exports={
      statusOk: {"status": "OK"},
-     statusError: {"status":"ERROR"}
+     statusError: {"status":"error"}
 }
