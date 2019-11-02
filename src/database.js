@@ -1,7 +1,7 @@
 const env = require("./env");
 const debug = require("./debug");
 const { Client } = require('@elastic/elasticsearch')
-const client = new Client({ node: 'http://elasticsearch:9200' })
+const client = new Client({ node: 'http://130.245.170.216:9200' })
 
 const index = "tests20";
 const type = "test20";
@@ -45,7 +45,37 @@ module.exports={
           debug.log(JSON.stringify(result));
           return result;
      },
+     deleteItemById: async (id)=>{
+          let status = env.statusOk;
+          let error;
+          let item;
+          //post to image_service
+          const response = await client.deleteByQuery({
+               index: index,
+               type: type,
+               body: {
+                 query: {
+                   match: {
+                     _id: id
+                   }
+                 }
+               }
 
+          }).catch((e)=>{
+               debug.log(e);
+               status = env.statusError;
+               error = "error";
+          })
+
+          let result = {
+               status: status,
+               numDeleted: response.body.deleted,
+               error: error
+          }
+
+          debug.log(JSON.stringify(result));
+          return result;
+     },
      search: async (timestamp, limit)=>{
           let status = env.statusOk;
           let error;

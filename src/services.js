@@ -35,6 +35,12 @@ module.exports={
           debug.log("RETURNING ITEM: " + ret);
           return ret;
      },
+     getItemById: async (id)=>{
+
+          let ret = await db.getItemById(id);
+          debug.log("GETTING ITEM: " + ret);
+          return ret;
+     },
      deleteItemById: async (id)=>{
 
           let ret = await db.deleteItemById(id);

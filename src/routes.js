@@ -28,10 +28,11 @@ router.get('/item/:id', async (req, res, next)=>{
 router.delete('/item/:id', async (req, res, next)=>{
      let args = req.params;
      let ret = await service.deleteItemById(args.id);
-     ret.status = ret.status.status;
-     debug.log(ret);
+     ret.status = ret.status.status
+     debug.log(ret)
      res.send(ret);
 });
+
 router.post('/search', async (req, res, next)=>{
      let args = req.body;
      console.log(JSON.stringify(args));
