@@ -12,6 +12,7 @@ module.exports={
           let status = env.statusOk;
           let error;
           let item;
+          //post to image_service
           const response = await client.search({
                index: index,
                type: type,
@@ -33,7 +34,7 @@ module.exports={
                debug.log("item: " + JSON.stringify(item));
           }
 	  if(item){
-	       item.id = id 
+	       item.id = id
 	  }
           let result = {
                status: status,
@@ -65,7 +66,7 @@ module.exports={
                     query: {
                        range : {
                            timestamp : {
-                               
+
 			       lte : timestamp
                            }
                        }
@@ -87,6 +88,47 @@ module.exports={
           return {}
 	  }
      },
+
+     searchByUsername: async (username, limit)=>{
+          let status = env.statusOk;
+          let error;
+          let item;
+          if(!limit){
+               limit = 50;
+          }
+          if(limit > 200){
+               debug.lot("to large");
+               limit = 200;
+          }
+          debug.log("username" + username)
+          const response = await client.search({
+               index: index,
+               type: type,
+               size : limit,
+               body:{
+                    query: {
+                         match: {
+                           username: username
+                         }
+                   }
+               }
+         }).catch((e)=>{
+              debug.log(e);
+              status = env.statusError;
+              error = "error";
+         })
+          debug.log(JSON.stringify(response))
+       if(response){
+              return response.body.hits.hits.map((elm)=>{
+                    //if(elm.timestamp === timestamp){ return  }
+            let ret = elm._source;
+                    ret.id = elm._id;
+               return ret;
+           })
+          return {}
+       }
+     },
+
      addItem: async (item)=>{
           let status = env.statusOk;
           let error;

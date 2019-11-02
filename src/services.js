@@ -8,10 +8,10 @@ module.exports={
      getAll: async()=>{
 	   return await db.getAll();
      },
-     addItem: async (content, childType, username)=>{
-          let id = uuid();
+     addItem: async (content, childType, parent, media, username)=>{
+       let id = uuid();
 	  let ret = {};
-	
+
 	  if(!content){
 	       ret.status = env.statusError
 	       return ret
@@ -20,6 +20,8 @@ module.exports={
                content: content,
                childType: childType,
                username: username,
+               parent: parent,
+               media: media,
                timestamp: (new Date() / 1000),
                id: id
           }
@@ -33,11 +35,21 @@ module.exports={
           debug.log("RETURNING ITEM: " + ret);
           return ret;
      },
+     deleteItemById: async (id)=>{
+
+          let ret = await db.deleteItemById(id);
+          debug.log("DELETEING ITEM: " + ret);
+          return ret;
+     },
      search: async (timestamp, limit)=>{
           return db.search(timestamp, limit)
      },
      authorize: (cookie)=>{
           return (cookie !== "" && cookie);
+     },
+     searchByUsername: (username, limit)=>{
+          return db.searchByUsername(username, limit)
      }
+
 
 }
