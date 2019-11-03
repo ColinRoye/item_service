@@ -149,10 +149,8 @@ module.exports={
          })
           debug.log(JSON.stringify(response))
        if(response){
-              return response.body.hits.hits.map((elm)=>{
-                    //if(elm.timestamp === timestamp){ return  }
-            let ret = elm._source;
-                    ret.id = elm._id;
+              return response.body.hits.hits.map((elm)=>{            
+                ret = elm._id;
                return ret;
            })
           return {}

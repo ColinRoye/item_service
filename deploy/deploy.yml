@@ -1,0 +1,22 @@
+---
+- hosts: app
+  become: true
+  tasks:
+    - name: Install aptitude using apt
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install required system packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools', 'docker', 'docker-compose']
+    - git:
+        repo: https://github.com/ColinRoye/item_service
+        dest: /app2
+        force: yes
+    - name: Run mix commands
+      shell: cd /app && sudo su && docker system prune && sudo sysctl -w vm.max_map_count=524288 && sudo nohup docker-compose up --build&
+      ignore_errors: yes
+      #loop:
+      #  - "do deps.get, compile"
+      #  - "ecto.create"
+      #  - "ecto.migrate"
+      become: True
