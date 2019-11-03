@@ -76,10 +76,35 @@ module.exports={
           debug.log(JSON.stringify(result));
           return result;
      },
-     search: async (timestamp, limit)=>{
+     search: async (timestamp, limit, username, following, currentUser)=>{
           let status = env.statusOk;
           let error;
           let item;
+          debug.log("USERNAEM ASDFASDFADFS: "+ username)
+          let queryBody =
+          {
+               query: {
+                    bool:{
+                         must:[
+                               {
+                                    simple_query_string : {
+                                        query: "this is a test of the testExample",
+                                        fields: ["content"]
+                                   }
+                              },
+                              {
+                                   range : {
+                                        timestamp : {
+                                             lte : timestamp
+                                        }
+                                   }
+                              }]
+                         }
+               }
+          }
+
+
+
           if(!limit){
                limit = 25;
           }
@@ -87,21 +112,35 @@ module.exports={
                debug.lot("to large");
                limit = 100;
           }
-          debug.log("timestamp" + timestamp)
+          if(!timestamp){
+               timestamp = (new Date() / 1000)
+          }
+          if(username){
+               queryBody.query.bool.must.push({
+                    match: {
+                        username : username
+                   }
+               })
+          }
+          //only shows
+          if(following){
+               let followingArr = axios.get(env.baseUrl+"/user/"+currentUser+"/following")//max issue?
+               queryBody.query.bool.must.push({
+                    match: {
+                        username : followingArr
+                   }
+               })
+          }
+          debug.log("queryBody" + JSON.stringify(queryBody))
+          let test = "testExample test"
           const response = await client.search({
                index: index,
                type: type,
                size : limit,
-               body:{
-                    query: {
-                       range : {
-                           timestamp : {
+               body: queryBody
 
-			       lte : timestamp
-                           }
-                       }
-                   }
-               }
+
+
          }).catch((e)=>{
               debug.log(e);
               status = env.statusError;
@@ -109,14 +148,14 @@ module.exports={
          })
           debug.log(JSON.stringify(response))
 	  if(response){
-              return response.body.hits.hits.map((elm)=>{
-      	          //if(elm.timestamp === timestamp){ return  }
-		  let ret = elm._source;
-     	          ret.id = elm._id;
+            return response.body.hits.hits.map((elm)=>{
+               let ret = elm._source;
+     	     ret.id = elm._id;
 	          return ret;
 	      })
-          return {}
-	  }
+      }else{
+           return {}
+      }
      },
 
      searchByUsername: async (username, limit)=>{
@@ -149,7 +188,7 @@ module.exports={
          })
           debug.log(JSON.stringify(response))
        if(response){
-              return response.body.hits.hits.map((elm)=>{            
+              return response.body.hits.hits.map((elm)=>{
                 ret = elm._id;
                return ret;
            })

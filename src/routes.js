@@ -36,7 +36,7 @@ router.delete('/item/:id', async (req, res, next)=>{
 router.post('/search', async (req, res, next)=>{
      let args = req.body;
      console.log(JSON.stringify(args));
-     let ret = await service.search(args.timestamp, args.limit);
+     let ret = await service.search(args.timestamp, args.limit, args.username, args.following, req.cookies["auth"]);
      debug.log(ret)
      ret = {status: env.statusOk.status, items:ret}
      res.send(ret);
