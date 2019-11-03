@@ -122,7 +122,7 @@ module.exports={
                    }
                })
           }
-          //only shows
+          //TODO
           if(following){
                let followingArr = axios.get(env.baseUrl+"/user/"+currentUser+"/following")//max issue?
                queryBody.query.bool.must.push({
@@ -163,6 +163,7 @@ module.exports={
           let error;
           let item;
           if(!limit){
+               debug.log(limit)
                limit = 50;
           }
           if(limit > 200){
