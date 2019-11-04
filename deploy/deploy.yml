@@ -17,6 +17,7 @@
                && echo y | sudo docker system prune
                && sudo sysctl -w vm.max_map_count=524288
                && npm install
-               && nohup sudo docker-compose up&
+               && sudo docker-compose down
+               && sudo nohup docker-compose up&
       ignore_errors: yes
       become: True
