@@ -11,7 +11,7 @@ router.post('/additem', async (req, res, next)=>{
      if(service.authorize(req.cookies["auth"])){
           let args = req.body;
           let username = req.cookies["auth"];
-          let ret = await service.addItem(args.content, args.childType, args.parent, args.media, username, args.q);
+          let ret = await service.addItem(args.content, args.childType, args.parent, args.media, username);
 	  ret.status = ret.status.status
           res.send(ret);
      }else{
@@ -36,7 +36,7 @@ router.delete('/item/:id', async (req, res, next)=>{
 router.post('/search', async (req, res, next)=>{
      let args = req.body;
      console.log(JSON.stringify(args));
-     let ret = await service.search(args.timestamp, args.limit, args.username, args.following, req.cookies["auth"]);
+     let ret = await service.search(args.timestamp, args.limit, args.username, args.following, req.cookies["auth"], args.q);
      debug.log(ret)
      ret = {status: env.statusOk.status, items:ret}
      res.send(ret);
