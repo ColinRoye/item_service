@@ -81,27 +81,7 @@ module.exports={
           let error;
           let item;
           debug.log("qs: "+ queryString)
-          let queryBody =
-          {
-               query: {
-                    bool:{
-                         must:[
-                               {
-                                    simple_query_string : {
-                                        query: queryString,
-                                        fields: ["content"]
-                                   }
-                              },
-                              {
-                                   range : {
-                                        timestamp : {
-                                             lte : timestamp
-                                        }
-                                   }
-                              }]
-                         }
-               }
-          }
+
 
 
 
@@ -114,6 +94,28 @@ module.exports={
           }
           if(!timestamp){
                timestamp = (new Date() / 1000)
+          }
+          let queryBody ={
+               query: {
+                    bool:{
+                         must:[
+                              {
+                                   range : {
+                                        timestamp : {
+                                             lte : timestamp
+                                        }
+                                   }
+                              }]
+                         }
+               }
+          }
+          if(queryString){
+               queryBody.query.bool.must.push({
+                    simple_query_string : {
+                         query: queryString,
+                         fields: ["content"]
+                    }
+               })
           }
           if(username){
                queryBody.query.bool.must.push({
