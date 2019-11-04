@@ -85,14 +85,13 @@ module.exports={
           {
                query: {
                     bool:{
-                         should:[
+                         must:[
                                {
                                     simple_query_string : {
                                         query: "this is a test of the testExample",
                                         fields: ["content"]
                                    }
-                              }],
-                         must:[
+                              },
                               {
                                    range : {
                                         timestamp : {
