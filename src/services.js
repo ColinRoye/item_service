@@ -47,8 +47,8 @@ module.exports={
           debug.log("DELETEING ITEM: " + ret);
           return ret;
      },
-     search: async (timestamp, limit, username, following, currentUser)=>{
-          return db.search(timestamp, limit, username, following, currentUser)
+     search: async (timestamp, limit, username, following, currentUser, queryString)=>{
+          return db.search(timestamp, limit, username, following, currentUser, queryString)
      },
      authorize: (cookie)=>{
           return (cookie !== "" && cookie);

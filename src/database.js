@@ -76,7 +76,7 @@ module.exports={
           debug.log(JSON.stringify(result));
           return result;
      },
-     search: async (timestamp, limit, username, following, currentUser)=>{
+     search: async (timestamp, limit, username, following, currentUser, queryString)=>{
           let status = env.statusOk;
           let error;
           let item;
@@ -88,7 +88,7 @@ module.exports={
                          must:[
                                {
                                     simple_query_string : {
-                                        query: "this is a test of the testExample",
+                                        query: queryString,
                                         fields: ["content"]
                                    }
                               },

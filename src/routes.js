@@ -11,7 +11,7 @@ router.post('/additem', async (req, res, next)=>{
      if(service.authorize(req.cookies["auth"])){
           let args = req.body;
           let username = req.cookies["auth"];
-          let ret = await service.addItem(args.content, args.childType, args.parent, args.media, username);
+          let ret = await service.addItem(args.content, args.childType, args.parent, args.media, username, args.q);
 	  ret.status = ret.status.status
           res.send(ret);
      }else{
