@@ -80,7 +80,7 @@ module.exports={
           let status = env.statusOk;
           let error;
           let item;
-          debug.log("USERNAEM ASDFASDFADFS: "+ username)
+          debug.log("qs: "+ queryString)
           let queryBody =
           {
                query: {
