@@ -10,9 +10,13 @@
       loop: [ 'docker', 'docker-compose']
     - git:
         repo: https://github.com/ColinRoye/item_service.git
-        dest: /app2
+        dest: /app
         force: yes
     - name: Run mix commands
-      shell: cd /app && sudo su && docker system prune && sudo sysctl -w vm.max_map_count=524288 && sudo nohup docker-compose up --build&
+      shell: cd /app
+               && echo y | sudo docker system prune
+               && sudo sysctl -w vm.max_map_count=524288
+               && npm install
+               && nohup sudo docker-compose up&
       ignore_errors: yes
       become: True
