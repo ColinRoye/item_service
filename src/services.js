@@ -48,6 +48,9 @@ module.exports={
           return ret;
      },
      search: async (timestamp, limit, username, following, currentUser, queryString)=>{
+          if(limit === "undefined"){
+               limit = undefined;
+          }
           return db.search(timestamp, limit, username, following, currentUser, queryString)
      },
      authorize: (cookie)=>{
