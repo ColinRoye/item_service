@@ -48,7 +48,7 @@ router.get('/auth', async(req,res,next)=>{
 router.get('/items/:username', async(req,res,next)=>{
      let args = req.params;
      console.log(JSON.stringify(args));
-     let ret = await service.searchByUsername(args.username, req.body.limit);
+     let ret = await service.searchByUsername(args.username, args.limit);
      debug.log(ret)
      ret = {status: env.statusOk.status, items:ret}
      res.send(ret);
