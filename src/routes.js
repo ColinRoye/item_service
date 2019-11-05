@@ -45,7 +45,7 @@ router.get('/auth', async(req,res,next)=>{
      res.send("test: " + req.cookies["auth"]);
 });
 
-router.get('/items/:username', async(req,res,next)=>{
+router.get('/items/:username/:limit', async(req,res,next)=>{
      let args = req.params;
      console.log(JSON.stringify(args));
      let ret = await service.searchByUsername(args.username, args.limit);
