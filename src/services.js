@@ -44,12 +44,14 @@ module.exports={
      deleteItemById: async (id, username)=>{
           let item = await db.getItemById(id);
           let ret = {};
-          if(item.username === username){
+          debug.log("DELETE_SERVICE: ITEM "+ JSON.stringify(item))
+          if(item.item && item.item.username === username){
                ret = await db.deleteItemById(id);
                debug.log("DELETEING ITEM: " + ret);
 
                return ret;
           }else{
+               debug.log("USER DOES NOT OWN POST")
                return {status: {status: "error"}}
           }
 

@@ -51,6 +51,7 @@ module.exports={
           let error;
           let item;
           //post to image_service
+          debug.log("DATABASE_DELETE: deleteItemById")
           const response = await client.deleteByQuery({
                index: index,
                type: type,

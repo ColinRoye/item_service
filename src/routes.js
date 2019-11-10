@@ -28,7 +28,7 @@ router.get('/item/:id', async (req, res, next)=>{
 router.delete('/item/:id', async (req, res, next)=>{
      if(service.authorize(req.cookies["auth"])){
           let args = req.params;
-          let ret = await service.deleteItemById(args.id);
+          let ret = await service.deleteItemById(args.id, req.cookies["auth"]);
           ret.status = ret.status.status
           if(ret.status == 'error'){
                res.status(400).send(ret)
@@ -37,9 +37,11 @@ router.delete('/item/:id', async (req, res, next)=>{
                res.send(ret);
           }
 
+     }else{
+          res.status(400).send("error")
+
      }
-     res.status(400).send(ret)
-     
+
 });
 
 router.post('/search', async (req, res, next)=>{
