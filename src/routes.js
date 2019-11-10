@@ -21,7 +21,9 @@ router.post('/additem', async (req, res, next)=>{
 router.get('/item/:id', async (req, res, next)=>{
      let args = req.params;
      let ret = await service.getItemById(args.id);
+
      ret.status = ret.status.status
+     if(!ret.item){ret.status = env.statusError.status}
      debug.log(ret)
      res.send(ret);
 });
