@@ -26,11 +26,18 @@ router.get('/item/:id', async (req, res, next)=>{
      res.send(ret);
 });
 router.delete('/item/:id', async (req, res, next)=>{
-     let args = req.params;
-     let ret = await service.deleteItemById(args.id);
-     ret.status = ret.status.status
-     debug.log(ret)
-     res.send(ret);
+     if(service.authorize(req.cookies["auth"])){
+          let args = req.params;
+          let ret = await service.deleteItemById(args.id);
+          ret.status = ret.status.status
+          if(ret.status == 'error'){
+               res.status(400).send(ret)
+          }else{
+               debug.log(ret)
+               res.send(ret);
+          }
+
+     }
 });
 
 router.post('/search', async (req, res, next)=>{

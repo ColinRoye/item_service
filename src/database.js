@@ -5,6 +5,7 @@ const client = new Client({ node: 'http://130.245.170.216:9200' })
 
 const index = "tests20";
 const type = "test20";
+const axios = require("axios");
 
 //define database specific tasks here
 module.exports={
@@ -77,6 +78,8 @@ module.exports={
           return result;
      },
      search: async (timestamp, limit, username, following, currentUser, queryString)=>{
+          //could have issue with 200 limit of following
+
           let status = env.statusOk;
           let error;
           let item;
@@ -108,6 +111,22 @@ module.exports={
                               }]
                          }
                }
+          }
+
+          if(following || following == undefined){
+               let url = env.baseUrl + "/user/" + username +  '/following'
+               followingArray = (await axios.get(url)).data.users;
+               let followstr = ''
+               for(let i = 0; i < followingArray.length;i++){
+                    followstr = followingArray[i] + " ";
+               }
+               queryBody.query.bool.must.push({
+                    simple_query_string : {
+                         query: followstr,
+                         fields: ["username"]
+                    }
+               })
+
           }
           if(queryString){
                queryBody.query.bool.must.push({
@@ -156,7 +175,7 @@ module.exports={
 	          return ret;
 	      })
       }else{
-           return {}
+           return []
       }
      },
 

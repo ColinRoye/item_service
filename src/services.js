@@ -41,11 +41,18 @@ module.exports={
           debug.log("GETTING ITEM: " + ret);
           return ret;
      },
-     deleteItemById: async (id)=>{
+     deleteItemById: async (id, username)=>{
+          let item = await db.getItemById(id);
+          let ret = {};
+          if(item.username === username){
+               ret = await db.deleteItemById(id);
+               debug.log("DELETEING ITEM: " + ret);
 
-          let ret = await db.deleteItemById(id);
-          debug.log("DELETEING ITEM: " + ret);
-          return ret;
+               return ret;
+          }else{
+               return {status: {status: "error"}}
+          }
+
      },
      search: async (timestamp, limit, username, following, currentUser, queryString)=>{
           if(limit === "undefined"){
