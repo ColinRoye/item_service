@@ -114,7 +114,7 @@ module.exports={
           }
 
           if(following || following == undefined){
-               let url = env.baseUrl + "/user/" + username +  '/following'
+               let url = env.baseUrl + "/user/" + currentUser +  '/following'
                followingArray = (await axios.get(url)).data.users;
                let followstr = ''
                for(let i = 0; i < followingArray.length;i++){
@@ -144,14 +144,6 @@ module.exports={
                })
           }
           //TODO
-          if(following){
-               let followingArr = axios.get(env.baseUrl+"/user/"+currentUser+"/following")//max issue?
-               queryBody.query.bool.must.push({
-                    match: {
-                        username : followingArr
-                   }
-               })
-          }
           debug.log("queryBody" + JSON.stringify(queryBody))
           let test = "testExample test"
           const response = await client.search({

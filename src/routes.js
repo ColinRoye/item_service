@@ -38,6 +38,8 @@ router.delete('/item/:id', async (req, res, next)=>{
           }
 
      }
+     res.status(400).send(ret)
+     
 });
 
 router.post('/search', async (req, res, next)=>{
