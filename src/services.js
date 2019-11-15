@@ -67,6 +67,9 @@ module.exports={
      },
      searchByUsername: (username, limit)=>{
           return db.searchByUsername(username, limit)
+     },
+     likeItem: async(itemID, like, currentUser)=> {
+          return db.likeItem(itemID, like, currentUser)
      }
 
 

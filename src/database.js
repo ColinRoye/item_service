@@ -86,9 +86,6 @@ module.exports={
           let item;
           debug.log("qs: "+ queryString)
 
-
-
-
           if(!limit){
                limit = 25;
           }
@@ -155,21 +152,23 @@ module.exports={
 
 
 
-         }).catch((e)=>{
+          }).catch((e)=>{
               debug.log(e);
               status = env.statusError;
               error = "error";
-         })
+          });
           debug.log(JSON.stringify(response))
-	  if(response){
-            return response.body.hits.hits.map((elm)=>{
-               let ret = elm._source;
-     	     ret.id = elm._id;
-	          return ret;
-	      })
-      }else{
-           return []
-      }
+	     if(response){
+               return response.body.hits.hits.map((elm)=>{
+                    let ret = elm._source;
+                    ret.id = elm._id;
+                    //debug.log("response element is  " + elm);
+                    debug.log("ret is " + ret);
+	               return ret;
+	          })
+          }else{
+               return []
+          }
      },
 
      searchByUsername: async (username, limit)=>{
@@ -224,7 +223,9 @@ module.exports={
                     username: item.username,
                     timestamp: item.timestamp,
                     retweets: 0,
-                    property: { likes: 0 }
+                    property: { likes: 0 },
+                    usersWhoLiked: [],
+                    media: []
                  }
           }).catch((e)=>{
                debug.log(e);
@@ -262,6 +263,122 @@ module.exports={
               })
           return {}
           }
+     },
+     likeItem: async(id, like, currentUser)=>{
+          getItemResult = await module.exports.getItemById(id)
+          //console.log("get Item Result is " + JSON.stringify(getItemResult));
+          //console.log("item in get itemresult is " + JSON.stringify(getItemResult.item.property));
 
+          //If Item exists
+          if(getItemResult.item){
+               //getItemResult.usersWhoLiked = [currentUser];
+               
+               //usersLiked.push(currentUser);
+               //getItemResult.usersWhoLiked = [currentUser, "dude"];
+               var usersLiked;
+               debug.log("Previous likes for this item " + JSON.stringify(getItemResult.item.itemusersWhoLiked));
+               /*
+               if(getItemResult.usersWhoLiked){
+                    usersLiked = JSON.parse(JSON.stringify(getItemResult.item.usersWhoLiked));
+               }
+               else{
+                    getItemResult.usersWhoLiked = ["dude"]; //Add dummy user
+                    usersLiked = JSON.parse(JSON.stringify(getItemResult.item.usersWhoLiked));
+               }
+
+               */
+               usersLiked = JSON.parse(JSON.stringify(getItemResult.item.usersWhoLiked));
+               var userAlreadyLiked = usersLiked.includes(currentUser)
+               if(like === true || like === "true"){
+                    debug.log("Like field is " + like);
+                    
+                    debug.log("userAlreadyLiked " + userAlreadyLiked);
+                    debug.log("usersLiked " + usersLiked);
+                    if(userAlreadyLiked){    //Current user already has this item liked
+                         debug.log("current user already exists in array");
+                         //Return status ok, since current user already has this item liked
+                    }
+                    else{    //Modify DB, as user now likes this item
+                         debug.log("User does not exist in array, so add it");
+                         getItemResult.item.property.likes += 1;
+                         usersLiked.push(currentUser);
+                         var sourceData = {
+                              doc: {
+                                   "id": getItemResult.item.id,
+                                   "content": getItemResult.item.content,
+                                   "username": getItemResult.item.username,
+                                   "timestamp": getItemResult.item.timestamp,
+                                   "retweets": getItemResult.item.retweets,
+                                   "property": getItemResult.item.property,
+                                   "usersWhoLiked": usersLiked,
+                                   "media": getItemResult.media
+                              }
+                         };
+                         var docParam = {
+                              id: getItemResult.item.id,
+                              index: index,
+                              type: type,
+                              body: sourceData
+                         }
+                         var response = await client.update(docParam, sourceData);
+                         debug.log("The response from update was" + JSON.stringify(response));
+                    }
+                    debug.log("Current list of likes is " + getItemResult.usersWhoLiked);
+               }
+               else{     //Unlike the item
+
+                    if(userAlreadyLiked){
+                         debug.log("Time to unlike item");
+                         getItemResult.item.property.likes -= 1;
+                         var indexOfUser = usersLiked.indexOf(currentUser);
+                         if(indexOfUser > -1){ usersLiked.splice(indexOfUser, 1);}
+                         debug.log("After unliking, usersLiked is " + usersLiked);
+                         var usersLikedAssignment;
+                         if(!usersLiked){
+                              usersLikedAssignment = []
+                         }
+                         else{ usersLikedAssignment = usersLiked;}
+                         var sourceData = {
+                              doc: {
+                                   "id": getItemResult.item.id,
+                                   "content": getItemResult.item.content,
+                                   "username": getItemResult.item.username,
+                                   "timestamp": getItemResult.item.timestamp,
+                                   "retweets": getItemResult.item.retweets,
+                                   "property": getItemResult.item.property,
+                                   "usersWhoLiked": usersLikedAssignment,
+                                   "media": getItemResult.media
+                              }
+                         };
+                         var docParam = {
+                              id: getItemResult.item.id,
+                              index: index,
+                              type: type,
+                              body: sourceData
+                         };
+                         var response = await client.update(docParam, sourceData)/*.catch(err =>{
+                              debug.log(err);
+                         }); */
+                         debug.log("The response from update " + JSON.stringify(response));
+                                                
+                    }
+                    else{
+                         //Current user does not like item, so nothing to unlike
+                         //Dont do anything and return ok? Check piazza post
+                    }
+               }
+               
+               
+               debug.log("Amount of likes in item is now " + JSON.stringify(getItemResult.item.property));
+               debug.log("Updated list of likers " + JSON.stringify(getItemResult.usersWhoLiked));
+               debug.log("Updated array object of likers " + usersLiked);
+               //console.log("Num likes for this item is now", item.property.likes);
+
+          }
+          else{
+               //Item does not exist
+               //Return error
+          }
+          return {}
      }
 }

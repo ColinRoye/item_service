@@ -50,7 +50,8 @@ router.post('/search', async (req, res, next)=>{
      let args = req.body;
      console.log(JSON.stringify(args));
      let ret = await service.search(args.timestamp, args.limit, args.username, args.following, req.cookies["auth"], args.q);
-     debug.log(ret)
+     //debug.log(ret)
+     debug.log("ret in routes " + ret);
      ret = {status: env.statusOk.status, items:ret}
      res.send(ret);
 });
@@ -67,6 +68,21 @@ router.get('/items/:username/:limit', async(req,res,next)=>{
      res.send(ret);
 });
 
+router.get('/yesornoSSH', async(req,res,next)=>{
+     res.send({status:"OK", msg:"Bro wtf did you do to my project"});
+});  
+
+
+router.post('/item/:id/like', async(req,res,next)=>{
+     if(service.authorize(req.cookies["auth"])){
+          let args = req.params;
+          let body = req.body;
+          let ret = await service.likeItem(args.id, body.like, req.cookies["auth"]);
+          debug.log("Return of like item " + ret)
+          ret = {status: env.statusOk.status, msg:"Item liked/unliked!" };
+          res.send(ret);
+     }
+});
 //router.post('/items', async(req,res,next)={
 //     console.log("frix");
 //     res.send("test");
