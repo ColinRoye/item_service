@@ -56,11 +56,11 @@ module.exports={
           }
 
      },
-     search: async (timestamp, limit, username, following, currentUser, queryString)=>{
+     search: async (timestamp, limit, username, following, currentUser, queryString, rank, hasMedia)=>{
           if(limit === "undefined"){
                limit = undefined;
           }
-          return db.search(timestamp, limit, username, following, currentUser, queryString)
+          return db.search(timestamp, limit, username, following, currentUser, queryString, rank)
      },
      authorize: (cookie)=>{
           return (cookie !== "" && cookie);
