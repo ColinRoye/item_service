@@ -111,7 +111,7 @@ module.exports={
                }
           }
 
-          if(following || following == undefined){
+          if(following || following == undefined || following == 'true'){
                let url = env.baseUrl + "/user/" + currentUser +  '/following'
                followingArray = (await axios.get(url)).data.users;
                let followstr = ''
