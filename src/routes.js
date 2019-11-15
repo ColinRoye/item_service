@@ -70,7 +70,7 @@ router.get('/items/:username/:limit', async(req,res,next)=>{
 
 router.get('/yesornoSSH', async(req,res,next)=>{
      res.send({status:"OK", msg:"Bro wtf did you do to my project"});
-});  
+});
 
 
 router.post('/item/:id/like', async(req,res,next)=>{
