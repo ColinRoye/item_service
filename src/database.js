@@ -78,7 +78,7 @@ module.exports={
           debug.log(JSON.stringify(result));
           return result;
      },
-     search: async (timestamp, limit, username, following, currentUser, queryString)=>{
+     search: async (timestamp, limit, username, following, currentUser, queryString, rank, hasMedia, replies)=>{
           //could have issue with 200 limit of following
 
           let status = env.statusOk;
@@ -141,6 +141,39 @@ module.exports={
                    }
                })
           }
+
+          if(hasMedia){
+               queryBody.query.bool.must_not({
+                    match : {
+                         media : []
+                    }
+               })
+          }
+
+          if(parent != "none" || parent != undefined){
+               queryBody.query.bool.must({
+                    match: {
+                         id : parent 
+                    }
+               })
+          }
+
+          if(replies === false){
+               queryBody.query.bool.must_not({
+                    match : {
+                         childType: "reply"
+                    }
+               })
+          }
+
+          if(rank === "time"){
+               queryBody.sort =  [{"timestamp" : "desc"}]
+               
+          }
+          else if(rank === "interest" || rank == undefined){
+               queryBody.sort = [{"property.likes" : "desc"}]
+          }
+
           //TODO
           debug.log("queryBody" + JSON.stringify(queryBody))
           let test = "testExample test"
@@ -214,6 +247,7 @@ module.exports={
           let status = env.statusOk;
           let error;
           let id;
+          
           const response = await client.index({
                index: index,
                type: type,
@@ -222,7 +256,7 @@ module.exports={
                     childType: item.childType,
                     username: item.username,
                     timestamp: item.timestamp,
-                    retweets: 0,
+                    retweeted: 0,
                     property: { likes: 0 },
                     usersWhoLiked: [],
                     media: []
