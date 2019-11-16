@@ -28,17 +28,20 @@ module.exports={
         }
         let url = env.baseUrl + "/used/" + media + "/"
         let check = -1;
-        for(let i=0; i < media.length; i++){
-          check = (await axios.get('http://hackguy.cse356.compas.cs.stonybrook.edu' + "/used/"+media[i])).data.used
+        if(media){
+          for(let i=0; i < media.length; i++){
+            check = (await axios.get('http://hackguy.cse356.compas.cs.stonybrook.edu' + "/used/"+media[i])).data.used
 
-          if(check !== '0'){
-              ret.status = env.statusError
-              return ret
-          }else{
-              check = (await axios.post('http://hackguy.cse356.compas.cs.stonybrook.edu' + "/used/"+media[i])).data.used
+            if(check !== '0'){
+                ret.status = env.statusError
+                return ret
+            }else{
+                check = (await axios.post('http://hackguy.cse356.compas.cs.stonybrook.edu' + "/used/"+media[i])).data.used
+            }
+
           }
-
         }
+
 
         ret = await db.addItem(item);
         return ret;

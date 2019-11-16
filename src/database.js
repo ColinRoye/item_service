@@ -1,7 +1,7 @@
 const env = require("./env");
 const debug = require("./debug");
 const { Client } = require('@elastic/elasticsearch')
-const client = new Client({ node: 'http://130.245.170.216:9200' })
+const client = new Client({ node: 'http://130.245.171.109:9200' })
 
 const index = "tests20";
 const type = "test20";
@@ -115,9 +115,9 @@ module.exports={
                let url = env.baseUrl + "/user/" + currentUser +  '/following'
                followingArray = (await axios.get(url)).data.users;
                let followstr = ''
-               for(let i = 0; i < followingArray.length;i++){
-                    followstr = followingArray[i] + " ";
-               }
+               // for(let i = 0; i < followingArray.length;i++){
+               //      followstr = followingArray[i] + " ";
+               // }
                queryBody.query.bool.must.push({
                     simple_query_string : {
                          query: followstr,
@@ -272,7 +272,7 @@ module.exports={
           //If Item exists
           if(getItemResult.item){
                //getItemResult.usersWhoLiked = [currentUser];
-               
+
                //usersLiked.push(currentUser);
                //getItemResult.usersWhoLiked = [currentUser, "dude"];
                var usersLiked;
@@ -291,7 +291,7 @@ module.exports={
                var userAlreadyLiked = usersLiked.includes(currentUser)
                if(like === true || like === "true"){
                     debug.log("Like field is " + like);
-                    
+
                     debug.log("userAlreadyLiked " + userAlreadyLiked);
                     debug.log("usersLiked " + usersLiked);
                     if(userAlreadyLiked){    //Current user already has this item liked
@@ -360,15 +360,15 @@ module.exports={
                               debug.log(err);
                          }); */
                          debug.log("The response from update " + JSON.stringify(response));
-                                                
+
                     }
                     else{
                          //Current user does not like item, so nothing to unlike
                          //Dont do anything and return ok? Check piazza post
                     }
                }
-               
-               
+
+
                debug.log("Amount of likes in item is now " + JSON.stringify(getItemResult.item.property));
                debug.log("Updated list of likers " + JSON.stringify(getItemResult.usersWhoLiked));
                debug.log("Updated array object of likers " + usersLiked);
